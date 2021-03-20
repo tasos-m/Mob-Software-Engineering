@@ -1,0 +1,2020 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "Mob API documentation",
+    "version" : "1.0.0",
+    "title" : "Mob API Documentation",
+    "contact" : {
+      "email" : "you@your-company.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "virtserver.swaggerhub.com",
+  "basePath" : "/tasosm/mob/1.0.0",
+  "tags" : [ {
+    "name" : "user",
+    "description" : "Operations related to user resource"
+  }, {
+    "name" : "activity",
+    "description" : "Operations related to activity resource"
+  }, {
+    "name" : "playlist",
+    "description" : "Operations related to playlist resource"
+  }, {
+    "name" : "playqueue",
+    "description" : "Operations related to playqueue resource"
+  }, {
+    "name" : "album",
+    "description" : "Operations related to album resource"
+  }, {
+    "name" : "song",
+    "description" : "Operations related to song resource"
+  }, {
+    "name" : "profile",
+    "description" : "Operations related to profile resource"
+  }, {
+    "name" : "statistics",
+    "description" : "Operations related to statistics resource"
+  }, {
+    "name" : "search",
+    "description" : "Operations related to search"
+  }, {
+    "name" : "player",
+    "description" : "Operations related to Music Player"
+  }, {
+    "name" : "newsfeed",
+    "description" : "Operations related to Newsfeed"
+  } ],
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/user" : {
+      "post" : {
+        "tags" : [ "user" ],
+        "summary" : "Create user",
+        "description" : "Create user by providing: username,password,email and choose Listener or Artist.",
+        "operationId" : "createUser",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "userCreationBody",
+          "description" : "Elements required to sign up",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/UserCreationBody"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created.",
+            "schema" : {
+              "$ref" : "#/definitions/UserEntity"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request. Invalid input."
+          },
+          "409" : {
+            "description" : "Conflict. A user with the same username or email already exists."
+          }
+        }
+      }
+    },
+    "/user/login" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Login",
+        "description" : "User login by providing username and password.",
+        "operationId" : "login",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "query",
+          "description" : "The user name for login",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "password",
+          "in" : "query",
+          "description" : "The password for login in clear text",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "headers" : {
+              "X-Rate-Limit" : {
+                "type" : "integer",
+                "format" : "int32",
+                "description" : "calls per hour allowed by the user"
+              }
+            },
+            "schema" : {
+              "$ref" : "#/definitions/Token"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request. Wrong username-password combination."
+          }
+        }
+      }
+    },
+    "/user/{username}" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Get user info",
+        "description" : "Get user information: username, password. isArtist, userID, email",
+        "operationId" : "getUserInfo",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "username",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/UserEntity"
+            }
+          },
+          "404" : {
+            "description" : "Not Found."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "user" ],
+        "summary" : "Change Password",
+        "description" : "Change user password by providing a new valid user password.",
+        "operationId" : "changePassword",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "username",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "userChangePassword",
+          "description" : "Login by providing the new password and login token",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/ChangePasswordBody"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/UserEntity"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request. Invalid input."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/activity" : {
+      "get" : {
+        "tags" : [ "activity" ],
+        "summary" : "Get activities of a user",
+        "description" : "Get activities of a specific user by date.",
+        "operationId" : "getActivityFromaUser",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "userID",
+          "in" : "query",
+          "description" : "userID",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "date",
+          "in" : "query",
+          "description" : "date",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ActivityEntity"
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "activity" ],
+        "summary" : "Create activity",
+        "description" : "Create activity of a user. It contains the userID, the type of the activity and a date.",
+        "operationId" : "createactivity",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "activityCreationBody",
+          "description" : "Elements required to create activity",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/ActivityCreationBody"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created.",
+            "schema" : {
+              "$ref" : "#/definitions/ActivityEntity"
+            }
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/activity/{activityID}" : {
+      "get" : {
+        "tags" : [ "activity" ],
+        "summary" : "Get activity info",
+        "description" : "Get activity info by providing an activityID.",
+        "operationId" : "getActivityInfo",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "activityID",
+          "in" : "path",
+          "description" : "activity",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/ActivityEntity"
+            }
+          },
+          "404" : {
+            "description" : "Not Found."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/song" : {
+      "post" : {
+        "tags" : [ "song" ],
+        "summary" : "Create song",
+        "description" : "Create a song by uploading a .zip file.",
+        "operationId" : "createSong",
+        "consumes" : [ "multipart/form-data" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Song",
+          "in" : "formData",
+          "description" : "The file to upload (.zip).",
+          "required" : true,
+          "type" : "file",
+          "x-mimetype" : "application/zip"
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created.",
+            "schema" : {
+              "$ref" : "#/definitions/SongEntity"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request. Invalid input."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/song/{songID}" : {
+      "get" : {
+        "tags" : [ "song" ],
+        "summary" : "Get info of a specific song",
+        "description" : "Get the data of a song entity by providing its unique songID",
+        "operationId" : "getSongByID",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "songID",
+          "in" : "path",
+          "description" : "The unique id of a song",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/SongEntity"
+            }
+          },
+          "404" : {
+            "description" : "Not Found. The songID provided doesn't match any song in the database."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "song" ],
+        "summary" : "Delete a specific song",
+        "description" : "Delete the data of a song entity by providing its unique songID.",
+        "operationId" : "deleteSongByID",
+        "parameters" : [ {
+          "name" : "songID",
+          "in" : "path",
+          "description" : "The unique id of a song",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK. The song was deleted."
+          },
+          "404" : {
+            "description" : "Not Found. The songID provided doesn't match any song in the database."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/playlist" : {
+      "post" : {
+        "tags" : [ "playlist" ],
+        "summary" : "Create playlist",
+        "description" : "Create a playlist by providing a title, a description, an array of songs, if it's public, and a coverURI.",
+        "operationId" : "createPlaylist",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "PlaylistCreationBody",
+          "description" : "Elements required to create a playlist",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/PlaylistCreationBody"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created.",
+            "schema" : {
+              "$ref" : "#/definitions/PlaylistEntity"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request. Invalid input."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/playlist/{playlistID}" : {
+      "get" : {
+        "tags" : [ "playlist" ],
+        "summary" : "Get a specific playlist",
+        "description" : "Get the data of a playlist entity by providing its unique playlistID",
+        "operationId" : "getPlaylistByID",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "playlistID",
+          "in" : "path",
+          "description" : "The unique id of a playlist",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/PlaylistEntity"
+            }
+          },
+          "404" : {
+            "description" : "Not Found. The playlistID provided doesn't match any playlist in the database."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "playlist" ],
+        "summary" : "Update info of a playlist",
+        "description" : "Update a playlist entity by providing its unique playlistID and the data you wish to change.",
+        "operationId" : "updatePlaylistInfo",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "playlistID",
+          "in" : "path",
+          "description" : "The unique id of a playlist",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "in" : "body",
+          "name" : "PlaylistCreationBody",
+          "description" : "Elements required to create a playlist",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/PlaylistUpdateBody"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/PlaylistEntity"
+            }
+          },
+          "404" : {
+            "description" : "Not Found. The playlistID provided doesn't match any playlist in the database."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "playlist" ],
+        "summary" : "Delete a specific playlist",
+        "description" : "Delete the data of a playlist entity by providing its unique playlistID.",
+        "operationId" : "deletePlaylistByID",
+        "parameters" : [ {
+          "name" : "playlistID",
+          "in" : "path",
+          "description" : "The unique id of a playlist",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK."
+          },
+          "404" : {
+            "description" : "Not Found. The playlistID provided doesn't match any song in the database."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/playlist/{playlistID}/song" : {
+      "post" : {
+        "tags" : [ "playlist" ],
+        "summary" : "Add a song to a playlist",
+        "description" : "Add a song to a playlist by providing its unique songID and the corresponding playlistID.",
+        "operationId" : "addSongToPlaylist",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "playlistID",
+          "in" : "path",
+          "description" : "The unique id of a playlist",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "Song",
+          "description" : "Song to be added",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/SongEntity"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK. Song added to playlist.",
+            "schema" : {
+              "$ref" : "#/definitions/PlaylistEntity"
+            }
+          },
+          "404" : {
+            "description" : "Not Found. The Song doesn't exist."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/playlist/{playlistID}/song/{songID}" : {
+      "delete" : {
+        "tags" : [ "playlist" ],
+        "summary" : "Remove a specific song from a playlist",
+        "description" : "Remove a song from a playlist by providing its unique songID and the corresponding playlistID.",
+        "operationId" : "removeSongFromPlaylist",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "playlistID",
+          "in" : "path",
+          "description" : "The unique id of a playlist",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "songID",
+          "in" : "path",
+          "description" : "The unique id of a song",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/PlaylistEntity"
+            }
+          },
+          "404" : {
+            "description" : "Not Found. The songID provided doesn't match any song in the playlist."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/album" : {
+      "post" : {
+        "tags" : [ "album" ],
+        "summary" : "Create album",
+        "description" : "Create album by uploading a .zip file.",
+        "operationId" : "createAlbum",
+        "consumes" : [ "multipart/form-data" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Album",
+          "in" : "formData",
+          "description" : "Songs of album(.zip)",
+          "required" : true,
+          "type" : "file",
+          "x-mimetype" : "application/zip"
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created.",
+            "schema" : {
+              "$ref" : "#/definitions/AlbumEntity"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request. Invalid input."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/album/{albumID}" : {
+      "get" : {
+        "tags" : [ "album" ],
+        "summary" : "Get album info",
+        "description" : "Get album info by providing its albumID.",
+        "operationId" : "getAlbumInfo",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "albumID",
+          "in" : "path",
+          "description" : "Unique ID of the Album",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/AlbumEntity"
+            }
+          },
+          "404" : {
+            "description" : "Not Found."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "album" ],
+        "summary" : "Delete an album",
+        "description" : "Delete the data of an album entity by providing its unique albumID.",
+        "operationId" : "deleteAlbumByID",
+        "parameters" : [ {
+          "name" : "albumID",
+          "in" : "path",
+          "description" : "The unique id of an album",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK."
+          },
+          "404" : {
+            "description" : "Not Found. The albumID provided doesn't match any album in the database."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/playqueue" : {
+      "post" : {
+        "tags" : [ "playqueue" ],
+        "summary" : "Initialize Playqueue.",
+        "description" : "Create Playqueue and add the provided songs.",
+        "operationId" : "fillPlayqueue",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "userPlayqueue",
+          "description" : "Songs in a playqueue",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/PlayqueueCreationBody"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created.",
+            "schema" : {
+              "$ref" : "#/definitions/PlayqueueEntity"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request. Empty playqueue."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/playqueue/{playerID}" : {
+      "get" : {
+        "tags" : [ "playqueue" ],
+        "summary" : "Load playqueue",
+        "description" : "Load playqueue of a user, containing the songs and playback info.",
+        "operationId" : "getPlayQueue",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "playerID",
+          "in" : "path",
+          "description" : "playerID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/PlayqueueEntity"
+            }
+          },
+          "404" : {
+            "description" : "Not Found. Empty Playqueue."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "playqueue" ],
+        "summary" : "Edit playback settings",
+        "description" : "Edit Playback settings.",
+        "operationId" : "EditPlayqueue",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "playbackSettings",
+          "description" : "Update playback settings",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/playbackSettings"
+          }
+        }, {
+          "name" : "playerID",
+          "in" : "path",
+          "description" : "playerID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/PlayqueueEntity"
+            }
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/playqueue/{playerID}/song/{songID}" : {
+      "put" : {
+        "tags" : [ "playqueue" ],
+        "summary" : "Add a song to a playqueue",
+        "description" : "Add a song to the playqueue by providing the corresponding songID.",
+        "operationId" : "addSongToPlayqueue",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "songID",
+          "in" : "path",
+          "description" : "The unique id of a song",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "playerID",
+          "in" : "path",
+          "description" : "playerID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/PlayqueueEntity"
+            }
+          },
+          "404" : {
+            "description" : "Not Found. The songID provided doesn't match any song in the database or the playlist doesn't exist."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      },
+      "delete" : {
+        "tags" : [ "playqueue" ],
+        "summary" : "Remove a specific song from a Playqueue",
+        "description" : "Remove a song from a Playqueue by providing its unique songID and the corresponding playlistID.",
+        "operationId" : "removeSongFromplayQueue",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "songID",
+          "in" : "path",
+          "description" : "The unique id of a song",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "playerID",
+          "in" : "path",
+          "description" : "playerID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/PlayqueueEntity"
+            }
+          },
+          "404" : {
+            "description" : "Not Found. The songID provided doesn't match any song in the Playqueue."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/playqueue/{playerID}/album/{albumID}" : {
+      "put" : {
+        "tags" : [ "playqueue" ],
+        "summary" : "Add album to a playqueue",
+        "description" : "Add album to the playqueue by providing the corresponding albumID.",
+        "operationId" : "addAlbumToPlayqueue",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "albumID",
+          "in" : "path",
+          "description" : "The unique id of an album",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "playerID",
+          "in" : "path",
+          "description" : "playerID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/PlayqueueEntity"
+            }
+          },
+          "404" : {
+            "description" : "Not Found."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/playqueue/{playerID}/playlist/{playlistID}" : {
+      "put" : {
+        "tags" : [ "playqueue" ],
+        "summary" : "Add playlist to a playqueue",
+        "description" : "Add playlist to the playqueue by providing the corresponding playlistID.",
+        "operationId" : "addPlaylistToPlayqueue",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "playlistID",
+          "in" : "path",
+          "description" : "The unique id of an playlist",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "playerID",
+          "in" : "path",
+          "description" : "playerID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/PlayqueueEntity"
+            }
+          },
+          "404" : {
+            "description" : "Not Found."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/profile" : {
+      "post" : {
+        "tags" : [ "profile" ],
+        "summary" : "Create user profile",
+        "description" : "Create a profile after an account creation.",
+        "operationId" : "createProfile",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "profileCreationBody",
+          "description" : "Profile Information",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/ProfileCreationBody"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created.",
+            "schema" : {
+              "$ref" : "#/definitions/ProfileEntity"
+            }
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/profile/{userID}" : {
+      "get" : {
+        "tags" : [ "profile" ],
+        "summary" : "Get profile info",
+        "description" : "Get Profile information by providing the corresponding userID.",
+        "operationId" : "getProfile",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "userID",
+          "in" : "path",
+          "description" : "userID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/ProfileEntity"
+            }
+          },
+          "404" : {
+            "description" : "Not Found."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      },
+      "put" : {
+        "tags" : [ "profile" ],
+        "summary" : "Change Profile Info",
+        "description" : "Change profile info by providing the userID and the data you wish to change.",
+        "operationId" : "changeProfileInfo",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "userID",
+          "in" : "path",
+          "description" : "userID",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "in" : "body",
+          "name" : "userProfileInfo",
+          "description" : "description, username media, profile change",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/ChangeProfileInfoBody"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/ProfileEntity"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request. Invalid Info."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/profile/{userID}/follow/{followingID}" : {
+      "put" : {
+        "tags" : [ "profile" ],
+        "summary" : "Follow a user",
+        "description" : "Follow someone. This userID provided is added in the FollowingID array.",
+        "operationId" : "followauser",
+        "parameters" : [ {
+          "name" : "followingID",
+          "in" : "path",
+          "description" : "The userID of the user you want to follow (followingID)",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "userID",
+          "in" : "path",
+          "description" : "userID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/profile/{userID}/unfollow/{followingID}" : {
+      "delete" : {
+        "tags" : [ "profile" ],
+        "summary" : "Unfollow someone",
+        "description" : "Delete the userID of the user you want to unfollow from the FollowingsID array.",
+        "operationId" : "unfollowUser",
+        "parameters" : [ {
+          "name" : "followingID",
+          "in" : "path",
+          "description" : "The userID of the user you want to unfollow (followingID)",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "userID",
+          "in" : "path",
+          "description" : "userID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/profile/{userID}/followedby/{followersID}" : {
+      "put" : {
+        "tags" : [ "profile" ],
+        "summary" : "Add a new follower",
+        "description" : "The userID of the user who follows you is added in the FollowersID array.",
+        "operationId" : "addafollower",
+        "parameters" : [ {
+          "name" : "followersID",
+          "in" : "path",
+          "description" : "The userID of the user who wants to follow you (followersID)",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "userID",
+          "in" : "path",
+          "description" : "userID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/profile/{userID}/unfollowedby/{followersID}" : {
+      "delete" : {
+        "tags" : [ "profile" ],
+        "summary" : "Delete a follower",
+        "description" : "Someone unfollowed you. Remove this followerID from your FollowersID array.",
+        "operationId" : "deletefollower",
+        "parameters" : [ {
+          "name" : "followersID",
+          "in" : "path",
+          "description" : "The userID of the user who wants to unfollow you (followersID)",
+          "required" : true,
+          "type" : "integer"
+        }, {
+          "name" : "userID",
+          "in" : "path",
+          "description" : "userID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/search" : {
+      "get" : {
+        "tags" : [ "search" ],
+        "summary" : "Search with a keyword",
+        "description" : "Search for Songs, Albums, Playlists and Profiles with a keyword.",
+        "operationId" : "searchbykeyword",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "keyword",
+          "in" : "query",
+          "description" : "Keyword",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "type",
+          "in" : "query",
+          "description" : "Type of searching objects: song, album, playlist, profile. Multiple types must be seperated with commas. At least one type is required.",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/SearchEntity"
+            }
+          },
+          "404" : {
+            "description" : "Not Found. There are no results matching the keyword."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/statistics" : {
+      "get" : {
+        "tags" : [ "statistics" ],
+        "summary" : "Statistics of a specific Artist.",
+        "description" : "The Artist can view his/her statistics.",
+        "operationId" : "getStatistics",
+        "produces" : [ "application/json" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/StatisticsEntity"
+            }
+          },
+          "404" : {
+            "description" : "Not Found. This user has no statistics."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/player/{playerID}" : {
+      "get" : {
+        "tags" : [ "player" ],
+        "summary" : "Playback Information",
+        "description" : "Get information about the user's current playback.",
+        "operationId" : "playerInfo",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "playerID",
+          "in" : "path",
+          "description" : "playerID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/MusicPlayer"
+            }
+          },
+          "404" : {
+            "description" : "Not Found."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/player/{playerID}/play" : {
+      "put" : {
+        "tags" : [ "player" ],
+        "summary" : "Start a user's playback",
+        "description" : "Start / Resume a user's playback.",
+        "operationId" : "play",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "playerID",
+          "in" : "path",
+          "description" : "playerID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/MusicPlayer"
+            }
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/player/{playerID}/pause" : {
+      "put" : {
+        "tags" : [ "player" ],
+        "summary" : "Pause a user's playback",
+        "description" : "Pause a user's playback.",
+        "operationId" : "pause",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "playerID",
+          "in" : "path",
+          "description" : "playerID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/MusicPlayer"
+            }
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/player/{playerID}/next" : {
+      "put" : {
+        "tags" : [ "player" ],
+        "summary" : "Move to next song",
+        "description" : "Skip a song and move to the next song of the Playqueue.",
+        "operationId" : "next",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "playerID",
+          "in" : "path",
+          "description" : "playerID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/MusicPlayer"
+            }
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/player/{playerID}/previous" : {
+      "put" : {
+        "tags" : [ "player" ],
+        "summary" : "Go back to previous song",
+        "description" : "Go back to previous song of the Playqueue.",
+        "operationId" : "previous",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "playerID",
+          "in" : "path",
+          "description" : "playerID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/MusicPlayer"
+            }
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/player/{playerID}/seek" : {
+      "put" : {
+        "tags" : [ "player" ],
+        "summary" : "Change the progress variable in the currently playing song.",
+        "description" : "Change the progress variable in the currently playing song by moving the slider to the desired position.",
+        "operationId" : "seek",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "playerID",
+          "in" : "path",
+          "description" : "playerID",
+          "required" : true,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/MusicPlayer"
+            }
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    },
+    "/newsfeed" : {
+      "get" : {
+        "tags" : [ "newsfeed" ],
+        "summary" : "Get the newsfeed object",
+        "description" : "Get the newsfeed info for the logged in Listener.",
+        "operationId" : "getNewsfeed",
+        "produces" : [ "application/json" ],
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "OK.",
+            "schema" : {
+              "$ref" : "#/definitions/NewsfeedEntity"
+            }
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "newsfeed" ],
+        "summary" : "Creation of the newsfeed",
+        "description" : "Creation of the newsfeed for the logged in Listener.",
+        "operationId" : "NewsfeedCreation",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "newsfeedCreation",
+          "description" : "The newsfeed creation body",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/NewsfeedCreationBody"
+          }
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "Created.",
+            "schema" : {
+              "$ref" : "#/definitions/NewsfeedEntity"
+            }
+          },
+          "400" : {
+            "description" : "Bad Request. Invalid input."
+          }
+        },
+        "security" : [ {
+          "JWTbearerAuth" : [ ]
+        } ]
+      }
+    }
+  },
+  "securityDefinitions" : {
+    "JWTbearerAuth" : {
+      "type" : "apiKey",
+      "name" : "Authorization",
+      "in" : "header"
+    }
+  },
+  "definitions" : {
+    "UserCreationBody" : {
+      "type" : "object",
+      "required" : [ "email", "isArtist", "password", "username" ],
+      "properties" : {
+        "username" : {
+          "type" : "string",
+          "example" : "niksaoul"
+        },
+        "password" : {
+          "type" : "string",
+          "example" : "123456789abcd!"
+        },
+        "isArtist" : {
+          "type" : "boolean",
+          "example" : true
+        },
+        "email" : {
+          "type" : "string",
+          "example" : "niksaoul@mob.com"
+        }
+      }
+    },
+    "UserEntity" : {
+      "type" : "object",
+      "properties" : {
+        "username" : {
+          "type" : "string",
+          "example" : "niksaoul"
+        },
+        "password" : {
+          "type" : "string",
+          "example" : "123456789abcd!"
+        },
+        "isArtist" : {
+          "type" : "boolean",
+          "example" : true
+        },
+        "userID" : {
+          "type" : "integer",
+          "example" : 1312
+        },
+        "email" : {
+          "type" : "string",
+          "example" : "niksaoul@mob.com"
+        }
+      }
+    },
+    "Token" : {
+      "type" : "object",
+      "properties" : {
+        "token" : {
+          "type" : "string",
+          "description" : "Token"
+        }
+      }
+    },
+    "ChangePasswordBody" : {
+      "type" : "object",
+      "required" : [ "newpassword", "token" ],
+      "properties" : {
+        "newpassword" : {
+          "type" : "string",
+          "example" : "987654321dcba?"
+        },
+        "token" : {
+          "type" : "string",
+          "example" : "laskfjsdnsfus5674"
+        }
+      }
+    },
+    "ActivityCreationBody" : {
+      "type" : "object",
+      "required" : [ "date", "typeOfActivity", "userID" ],
+      "properties" : {
+        "userID" : {
+          "type" : "integer",
+          "example" : 9999
+        },
+        "typeOfActivity" : {
+          "type" : "string",
+          "example" : "uploaded an album"
+        },
+        "date" : {
+          "type" : "string",
+          "format" : "date",
+          "example" : "2020-04-12T23:20:50.52Z"
+        }
+      }
+    },
+    "ActivityEntity" : {
+      "type" : "object",
+      "properties" : {
+        "userID" : {
+          "type" : "integer",
+          "example" : 9999
+        },
+        "activityID" : {
+          "type" : "integer",
+          "example" : 5555
+        },
+        "typeOfActivity" : {
+          "type" : "string",
+          "example" : "uploaded an album"
+        },
+        "date" : {
+          "type" : "string",
+          "format" : "date",
+          "example" : "2020-04-12T23:20:50.52Z"
+        }
+      }
+    },
+    "AlbumEntity" : {
+      "type" : "object",
+      "properties" : {
+        "albumID" : {
+          "type" : "integer",
+          "example" : 10
+        },
+        "title" : {
+          "type" : "string",
+          "example" : "Cleopatra"
+        },
+        "artist" : {
+          "type" : "string",
+          "example" : "The Lumineers"
+        },
+        "coverURI" : {
+          "type" : "string",
+          "example" : "https://mob/media/File:Cleopatra_album_cover.jpg"
+        },
+        "songs" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/SongEntity"
+          }
+        }
+      }
+    },
+    "SongEntity" : {
+      "type" : "object",
+      "properties" : {
+        "title" : {
+          "type" : "string",
+          "example" : "Come together"
+        },
+        "artist" : {
+          "type" : "string",
+          "example" : "The Beatles"
+        },
+        "album" : {
+          "type" : "string",
+          "example" : "Abbey Road"
+        },
+        "coverURI" : {
+          "type" : "string",
+          "example" : "https://mob/media/File:AbbeyRoad_song_cover.jpg"
+        },
+        "duration" : {
+          "type" : "integer",
+          "example" : 259
+        },
+        "songID" : {
+          "type" : "integer",
+          "example" : 123456789
+        },
+        "songURI" : {
+          "type" : "string"
+        }
+      }
+    },
+    "PlaylistEntity" : {
+      "type" : "object",
+      "properties" : {
+        "playlistID" : {
+          "type" : "integer",
+          "example" : 123456
+        },
+        "title" : {
+          "type" : "string",
+          "example" : "A playlist that wants to be adored"
+        },
+        "userID" : {
+          "type" : "integer",
+          "example" : 123
+        },
+        "coverURI" : {
+          "type" : "string",
+          "example" : "https://mob/media/File:Adored_playlist_cover.jpg"
+        },
+        "description" : {
+          "type" : "string",
+          "example" : "Sometimes I fantasise when the streets are cold and lonely"
+        },
+        "songs" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/SongEntity"
+          }
+        },
+        "isPublic" : {
+          "type" : "boolean",
+          "example" : true
+        },
+        "isEmpty" : {
+          "type" : "boolean",
+          "example" : false
+        }
+      }
+    },
+    "PlaylistCreationBody" : {
+      "type" : "object",
+      "required" : [ "description", "title" ],
+      "properties" : {
+        "title" : {
+          "type" : "string",
+          "example" : "A playlist that wants to be adored"
+        },
+        "description" : {
+          "type" : "string",
+          "example" : "Sometimes I fantasise when the streets are cold and lonely"
+        },
+        "songs" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/SongEntity"
+          }
+        },
+        "isPublic" : {
+          "type" : "boolean",
+          "example" : true
+        },
+        "coverURI" : {
+          "type" : "string",
+          "example" : "https://mob/media/File:Adored_playlist_cover.jpg"
+        }
+      }
+    },
+    "PlaylistUpdateBody" : {
+      "type" : "object",
+      "properties" : {
+        "title" : {
+          "type" : "string",
+          "example" : "A playlist that wants to be adored"
+        },
+        "description" : {
+          "type" : "string",
+          "example" : "Sometimes I fantasise when the streets are cold and lonely"
+        },
+        "isPublic" : {
+          "type" : "boolean",
+          "example" : true
+        },
+        "coverURI" : {
+          "type" : "string",
+          "example" : "https://mob/media/File:Adored_playlist_cover.jpg"
+        }
+      }
+    },
+    "PlayqueueCreationBody" : {
+      "type" : "object",
+      "required" : [ "songs" ],
+      "properties" : {
+        "songs" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/SongEntity"
+          }
+        }
+      }
+    },
+    "PlayqueueEntity" : {
+      "type" : "object",
+      "properties" : {
+        "isEmpty" : {
+          "type" : "boolean",
+          "example" : false
+        },
+        "isShuffle" : {
+          "type" : "boolean",
+          "example" : true
+        },
+        "isRepeat" : {
+          "type" : "boolean",
+          "example" : true
+        },
+        "playerID" : {
+          "type" : "integer",
+          "example" : 8888
+        },
+        "songs" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/SongEntity"
+          }
+        }
+      }
+    },
+    "ProfileCreationBody" : {
+      "type" : "object",
+      "required" : [ "isArtist", "userID", "username" ],
+      "properties" : {
+        "username" : {
+          "type" : "string",
+          "example" : "niksaoul"
+        },
+        "userID" : {
+          "type" : "integer",
+          "example" : 1312
+        },
+        "isArtist" : {
+          "type" : "boolean",
+          "example" : true
+        },
+        "coverURI" : {
+          "type" : "string",
+          "example" : "https://mob/media/File:Niksaoul_profile_cover.jpg"
+        }
+      }
+    },
+    "ProfileEntity" : {
+      "type" : "object",
+      "properties" : {
+        "username" : {
+          "type" : "string",
+          "example" : "niksaoul"
+        },
+        "description" : {
+          "type" : "string",
+          "example" : "Follow me if you love Pantelidis"
+        },
+        "followingID" : {
+          "type" : "array",
+          "example" : [ 22, 33, 44, 55, 666 ],
+          "items" : {
+            "type" : "integer"
+          }
+        },
+        "followersID" : {
+          "type" : "array",
+          "example" : [ 999, 4444, 44, 234 ],
+          "items" : {
+            "type" : "integer"
+          }
+        },
+        "coverURI" : {
+          "type" : "string",
+          "example" : "https://mob/media/File:Niksaoul_profile_cover.jpg"
+        },
+        "media" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/ProfileEntity_media"
+          }
+        },
+        "playlists" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/PlaylistEntity"
+          }
+        },
+        "isArtist" : {
+          "type" : "boolean",
+          "example" : true
+        },
+        "userID" : {
+          "type" : "integer",
+          "example" : 1312
+        },
+        "email" : {
+          "type" : "string",
+          "example" : "niksaoul@mob.com"
+        }
+      }
+    },
+    "ChangeProfileInfoBody" : {
+      "type" : "object",
+      "properties" : {
+        "newUsername" : {
+          "type" : "string",
+          "example" : "Nikolaos77"
+        },
+        "newDescription" : {
+          "type" : "string",
+          "example" : "Hi! I'm Nikos"
+        },
+        "coverURI" : {
+          "type" : "string",
+          "example" : "https://mob/media/File:Niksaoul_profile_cover.jpg"
+        },
+        "newMedia" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/ProfileEntity_media"
+          }
+        }
+      }
+    },
+    "SearchEntity" : {
+      "type" : "object",
+      "properties" : {
+        "songs" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/SearchEntity_songs"
+          }
+        },
+        "albums" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/SearchEntity_albums"
+          }
+        },
+        "playlists" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/SearchEntity_playlists"
+          }
+        },
+        "profiles" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/SearchEntity_profiles"
+          }
+        }
+      }
+    },
+    "StatisticsEntity" : {
+      "type" : "object",
+      "properties" : {
+        "userID" : {
+          "type" : "integer",
+          "example" : 8888
+        },
+        "followers" : {
+          "type" : "integer",
+          "example" : 150000
+        },
+        "top5" : {
+          "type" : "array",
+          "example" : [ "Ophelia", "Ho hey", "Sleep on the floor", "Stubborn Love", "Gloria" ],
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "gender" : {
+          "type" : "array",
+          "example" : [ "Male 40%", "Female 60%" ],
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "ages" : {
+          "type" : "array",
+          "example" : [ "20-30: 50%", "30-40: 30%", "40-50: 20%" ],
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "location" : {
+          "type" : "array",
+          "example" : [ "Chicago,US", "Los Angeles,US", "Dallas,US", "New York,US", "Atlanta,US" ],
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "monthlyListeners" : {
+          "type" : "integer",
+          "example" : 2000000
+        },
+        "imagesURL" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "example" : "https://mob/media/File:Lumineers_statistics_graph.jpg"
+          }
+        }
+      }
+    },
+    "MusicPlayer" : {
+      "type" : "object",
+      "properties" : {
+        "progress" : {
+          "type" : "integer",
+          "example" : 69
+        },
+        "isPlaying" : {
+          "type" : "boolean",
+          "example" : true
+        },
+        "currentSong" : {
+          "type" : "integer",
+          "example" : 3
+        },
+        "playerID" : {
+          "type" : "integer",
+          "example" : 8888
+        },
+        "playqueue" : {
+          "$ref" : "#/definitions/PlayqueueEntity"
+        }
+      }
+    },
+    "NewsfeedEntity" : {
+      "type" : "object",
+      "properties" : {
+        "userID" : {
+          "type" : "integer",
+          "example" : 55
+        },
+        "date" : {
+          "type" : "string",
+          "format" : "date",
+          "example" : "2020-04-12T23:20:50.52Z"
+        },
+        "followingActivities" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/ActivityEntity"
+          }
+        }
+      }
+    },
+    "NewsfeedCreationBody" : {
+      "type" : "object",
+      "required" : [ "followingID" ],
+      "properties" : {
+        "followingID" : {
+          "type" : "array",
+          "example" : [ 99, 7, 66, 23 ],
+          "items" : {
+            "type" : "integer"
+          }
+        }
+      }
+    },
+    "playbackSettings" : {
+      "type" : "object",
+      "properties" : {
+        "isShuffle" : {
+          "type" : "boolean",
+          "example" : true
+        },
+        "isRepeat" : {
+          "type" : "boolean",
+          "example" : true
+        }
+      }
+    },
+    "ProfileEntity_media" : {
+      "type" : "object",
+      "properties" : {
+        "icon" : {
+          "type" : "string",
+          "example" : "fb.png"
+        },
+        "link" : {
+          "type" : "string",
+          "example" : "www.facebook.com/niksaoul"
+        }
+      }
+    },
+    "SearchEntity_songs" : {
+      "type" : "object",
+      "properties" : {
+        "title" : {
+          "type" : "string"
+        },
+        "artist" : {
+          "type" : "string"
+        },
+        "album" : {
+          "type" : "string"
+        },
+        "coverURI" : {
+          "type" : "string"
+        },
+        "songURI" : {
+          "type" : "string"
+        }
+      }
+    },
+    "SearchEntity_albums" : {
+      "type" : "object",
+      "properties" : {
+        "title" : {
+          "type" : "string"
+        },
+        "artist" : {
+          "type" : "string"
+        },
+        "coverURI" : {
+          "type" : "string"
+        }
+      }
+    },
+    "SearchEntity_playlists" : {
+      "type" : "object",
+      "properties" : {
+        "title" : {
+          "type" : "string"
+        },
+        "coverURI" : {
+          "type" : "string"
+        }
+      }
+    },
+    "SearchEntity_profiles" : {
+      "type" : "object",
+      "properties" : {
+        "username" : {
+          "type" : "string"
+        },
+        "isArtist" : {
+          "type" : "string"
+        },
+        "coverURI" : {
+          "type" : "string"
+        }
+      }
+    }
+  }
+}
