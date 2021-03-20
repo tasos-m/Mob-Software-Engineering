@@ -1,0 +1,14 @@
+R-13	
+The system must be able to serve 50000 users with maximum response time of 200 ms, assuming having a LTE connection.
+
+R-14	
+The system must be able to prevent unauthorized login attempts.
+
+R-15	
+The system must have memorability of the last state after the last exit from mob.
+
+R-16	
+The system must ensure that the rate of errors during the streaming of a song should be less than 1%.
+
+R-17	
+The system must be compliant with Article 15 of the GDPR.
