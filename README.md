@@ -26,7 +26,7 @@ With my team we have decided to build a music streaming and social network appli
 * The system must be compliant with Article 15 of the GDPR.
 
 ## User Stories
-User Stories can be found in the folder _User Stories_.
+User Stories in Gherkin Language can be found in the folder _User Stories_.
 
 ## Swagger API
 In the swaggerhub branch of this repository, in the node-output folder you can find the _swagger.json_ file that is pushed from the SwaggerHub. The API in SwaggerHub is [here](https://app.swaggerhub.com/apis/tasosm/mob-api_documentation/1.0.0) and you can access the API documentation [here](https://app.swaggerhub.com/apis-docs/tasosm/mob-api_documentation/1.0.0).
