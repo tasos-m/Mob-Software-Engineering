@@ -34,6 +34,9 @@ In the swaggerhub branch of this repository, in the node-output folder you can f
 ## Node-RED
 Node-RED flows for this application in .json format can be found in _Flows_mob.json_.
 
+## Deliverables
+You can read the deliverables in Greek, that were required for this project, in the _1st Deliverable.pdf_ and _2nd Deliverable.pdf_.
+
 ## Group info
 Team 20, Software Enginnering, June 2020
 
