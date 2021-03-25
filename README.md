@@ -2,6 +2,12 @@
 The goal of this assignment is to write the User and System Requirements of a web application, write a RESTful API and build Node-RED flows.
 With my team we have decided to build a music streaming and social network application that is called **Mob**.
 
+
+
+<p align="center">
+  <img width="300"  src="https://github.com/tasos-m/Mob-Software-Engineering/blob/main/Logo%20and%20Mockups/logo.png">
+</p>
+
 ## Functional Requirements
 
 * A user must be able to search for music / profiles with a keyword.
@@ -47,3 +53,5 @@ Mastralexi Christina Maria
 Mouratidis Anastasios
 
 Saoulidis Nikolaos
+
+
