@@ -46,12 +46,12 @@ You can read the deliverables in Greek, that were required for this project, in 
 ## Group info
 Team 20, Software Enginnering, June 2020
 
-Charitou Eleni
+[Charitou Eleni](https://github.com/EleniCharitou)
 
 Mastralexi Christina Maria
 
 Mouratidis Anastasios
 
-Saoulidis Nikolaos
+[Saoulidis Nikolaos](https://github.com/saouling)
 
 
