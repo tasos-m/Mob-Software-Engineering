@@ -50,7 +50,7 @@ Team 20, Software Enginnering, June 2020
 
 [Mastralexi Christina Maria](https://github.com/cmastral)
 
-Mouratidis Anastasios
+[Mouratidis Anastasios](https://github.com/tasos-m)
 
 [Saoulidis Nikolaos](https://github.com/saouling)
 
