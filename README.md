@@ -48,7 +48,7 @@ Team 20, Software Enginnering, June 2020
 
 [Charitou Eleni](https://github.com/EleniCharitou)
 
-Mastralexi Christina Maria
+[Mastralexi Christina Maria](https://github.com/cmastral)
 
 Mouratidis Anastasios
 
